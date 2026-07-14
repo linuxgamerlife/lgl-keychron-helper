@@ -74,6 +74,13 @@
         font-size: 12px;
         margin-top: 24px;
       }
+
+      .disclaimer {
+        color: #6b666e;
+        font-size: 11px;
+        line-height: 1.4;
+        margin-top: 12px;
+      }
     </style>
   </head>
   <body>
@@ -98,6 +105,11 @@
       >
     </div>
     <p class="copyright">Made by LinuxGamerLife<br />with help from his little AI friends</p>
+    <p class="disclaimer">
+      Keychron and Keychron Launcher are copyright and trademarks of ©Keychron Inc. LGL Keychron
+      Helper is an independent, unofficial project and is not affiliated with or endorsed by
+      Keychron.
+    </p>
     <script>
       const version = new URLSearchParams(window.location.search).get('version');
       document.getElementById('version').textContent = version ? `v${version}` : '';

@@ -8,7 +8,6 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](#license)
 [![Fedora](https://img.shields.io/badge/Fedora-44-blue?logo=fedora&logoColor=white)](https://fedoraproject.org)
 [![Electron](https://img.shields.io/badge/Electron-43-47848f?logo=electron&logoColor=white)](https://www.electronjs.org)
-[![React](https://img.shields.io/badge/React-19-61dafb?logo=react&logoColor=black)](https://react.dev)
 <p align="center">
   <a href="https://ko-fi.com/G2G3V70LW">
     <img src="https://storage.ko-fi.com/cdn/kofi6.png?v=6" height="36" alt="Buy Me a Coffee at ko-fi.com" />
@@ -78,15 +77,13 @@ Firmware updates are deliberately deferred until safe flashing, failure handling
 
 ## Architecture
 
-The application will use:
+The application uses:
 
 - **Electron** for the desktop runtime, Chromium engine, WebHID integration, and security boundaries
-- **TypeScript** for application code
-- **React** for trusted local screens such as device selection, diagnostics, permission guidance, and errors
-- **Vite** for local renderer builds
-- **Vitest** for automated testing
+- **TypeScript** for the main process
+- Small, sandboxed local HTML/JS popups (no framework) for trusted local screens such as the About window, device-connection confirmation, and permission setup
 
-Keychron Launcher will remain isolated remote content. React will not replace or inject itself into the Launcher interface.
+Keychron Launcher will remain isolated remote content. Local screens will not replace or inject themselves into the Launcher interface.
 
 ```text
 Keychron Launcher
@@ -110,7 +107,7 @@ Remote Launcher content is treated as untrusted web content even though it is su
 - Hardware access is restricted to approved origins and verified devices
 - Unrelated browser permissions are denied by default
 - Navigation, popups, downloads, and external URLs are controlled
-- Trusted local React content is separated from the remote website
+- Trusted local content is separated from the remote website
 - Native operations use narrow, typed, validated interfaces
 - The remote website receives no arbitrary shell or filesystem access
 
@@ -134,7 +131,7 @@ Install the locked JavaScript dependencies with:
 npm ci
 ```
 
-The current prototype only builds the Electron main process (no renderer yet — that arrives in Phase 2). Build inside the Distrobox, then run on the host:
+The current prototype builds the Electron main process. Build inside the Distrobox, then run on the host:
 
 ```bash
 # Inside the Fedora 44 Distrobox
@@ -168,7 +165,6 @@ This writes a self-contained build to `out/lgl-keychron-helper-linux-x64/`; run 
 - [x] Application menu, About window, and navigation controls
 - [x] Keychron Launcher WebHID proof of concept (confirmed connecting to a physical M7 8K)
 - [x] Guided Fedora device permissions (detects missing `hidraw` access and installs the `udev` rule via an in-app `pkexec` prompt)
-- [ ] React renderer and build workflow
 - [ ] M7 8K feature validation
 - [ ] Advanced diagnostics
 - [ ] Fedora RPM
@@ -179,9 +175,7 @@ See [lgl-keychron-helper_projectplan.md](lgl-keychron-helper_projectplan.md) for
 
 ## Project Status and Affiliation
 
-This is an independent, unofficial project. It is not affiliated with or endorsed by Keychron.
-
-Keychron and Keychron Launcher are trademarks or services of their respective owner.
+Keychron and Keychron Launcher are copyright and trademarks of ©Keychron Inc. LGL Keychron Helper is an independent, unofficial project and is not affiliated with or endorsed by Keychron.
 
 ---
 

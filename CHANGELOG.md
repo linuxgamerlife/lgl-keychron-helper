@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `npm run package` (`scripts/package.mjs`, using `@electron/packager`'s JS API) produces a standalone, runnable Linux bundle in `./out` — no npm/Node install needed to run it afterward. Excludes TypeScript sources, docs, and dev-only files; only compiled `dist/main` and `resources/` ship. The packaged binary is named `lgl-keychron-helper` rather than "LGL Keychron Helper" — Electron Packager rejects names ending in a *space* followed by "Helper" (a macOS-only naming collision with Electron's own internal helper processes) even when targeting Linux; a hyphen avoids that restriction. This only affects the packaged executable's filename, not the app's displayed name anywhere else.
+- Trademark/non-endorsement disclaimer added to the About popup (`resources/about/about.html`), matching the language already in `README.md`'s "Project Status and Affiliation" section: Keychron and Keychron Launcher are trademarks of Keychron Inc., and this project is independent and not affiliated with or endorsed by Keychron. Relevant now that the app is intended for public distribution via COPR.
+
+### Removed
+
+- `react`, `react-dom`, `@types/react`, `@types/react-dom`, `vite`, `@vitejs/plugin-react`, and `vitest` removed from `package.json`. These were pre-staged during initial planning for a React-based device chooser and Advanced diagnostics UI that turned out not to be needed — Launcher already has its own device-switching UI, and the local screens that do exist (About, device-confirm, permission-setup) are small, static, and better served by plain HTML/JS with no build step than by a framework. Zero React code was ever written; this is dependency cleanup, not a behavior change. See the architecture amendment in `lgl-keychron-helper_projectplan.md`.
 
 ### Planned
 
@@ -51,4 +56,4 @@ Initial Phase 1 scaffold: the smallest possible Electron application capable of 
 
 - The device confirmation popup always targets the first Keychron-vendor-ID match. This is by design, not a gap to fill later: Launcher itself already has its own UI for switching between multiple connected Keychron devices (observed with the Ultra-Link 8K dongle's keyboard/mouse detection screen), so this app's job is just gating individual WebHID grants one at a time, not building a parallel device-management UI.
 - Guided permission install needs a PolicyKit authentication agent running in the session to show the `pkexec` prompt at all; on non-standard desktop sessions (e.g. a bare KWin session without a full Plasma session running) one may not be auto-started. The app doesn't manage or start one itself — that's session-level configuration outside its scope — but if `pkexec` fails for this or any other reason, the popup now shows the equivalent manual commands as a fallback instead of leaving the user stuck.
-- No React/Vite renderer or diagnostics yet — those are later phases per `lgl-keychron-helper_projectplan.md`.
+- No Advanced diagnostics section yet — a later phase per `lgl-keychron-helper_projectplan.md`. It will be a plain local HTML/JS popup, not React (see the Removed section above).

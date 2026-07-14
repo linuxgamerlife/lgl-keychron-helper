@@ -32,6 +32,8 @@ The first working prototype will target Fedora, run from source, and be validate
 
 ## Recommended architecture
 
+**Amendment (2026-07-14):** React and Vite were dropped from the architecture entirely, not just the device chooser. The original rationale for React below was mainly to support a full multi-device chooser UI — but Launcher already has its own UI for switching between multiple connected Keychron devices, so that chooser was never needed (see the Phase 2 amendment). Once that was gone, nothing in the app actually required a UI framework: the local trusted screens that do exist (About, device-connect confirmation, permission setup) are small, static, mostly one-shot popups, well served by plain HTML/CSS/vanilla JS loaded directly via `BrowserWindow.loadFile()`, with no build step, no bundler, and no framework dependency to keep patched and audited. `react`, `react-dom`, `vite`, `@vitejs/plugin-react`, and `vitest` were removed from `package.json` accordingly. References to React/Vite below describe the original plan and are superseded; treat "React screen" as "local HTML/JS popup" throughout.
+
 Use Electron with TypeScript and React.
 
 Electron is the preferred starting point because its Chromium renderer matches the browser engine Keychron officially expects, and Electron exposes application-level WebHID selection and permission APIs. This allows the app to load Launcher directly and respond when the site calls `navigator.hid.requestDevice()` without recreating Keychron's UI or reverse-engineering its HID protocol.
@@ -103,17 +105,17 @@ Exit criterion: Launcher detects the wired M7 8K and reads its existing configur
 
 Estimated effort: 2–3 working days.
 
-**Amendment (2026-07-14):** the device chooser does not need to be a full multi-device selection UI. Keychron Launcher already has its own UI for switching between multiple connected Keychron devices (observed with the Ultra-Link 8K dongle's keyboard/mouse detection screen) — this app's job is only to gate individual WebHID grants one at a time, which the existing simple confirmation popup (`src/main/device-confirm-window.ts`) already does. Whether that popup and the other already-built local screens (About, permission setup) get retrofitted into React once a Vite workflow exists, versus staying as lightweight standalone HTML/JS, is an open decision — they already work well as-is.
+**Amendment (2026-07-14):** the device chooser does not need to be a full multi-device selection UI. Keychron Launcher already has its own UI for switching between multiple connected Keychron devices (observed with the Ultra-Link 8K dongle's keyboard/mouse detection screen) — this app's job is only to gate individual WebHID grants one at a time, which the existing simple confirmation popup (`src/main/device-confirm-window.ts`) already does. React and Vite were subsequently dropped from the architecture entirely (see the amendment under "Recommended architecture" above) — the local screens (About, device-confirm, permission setup) stay as lightweight standalone HTML/JS, no framework, no build step.
 
 Turn the proof of concept into a maintainable application:
 
-- Establish a TypeScript and React build and development workflow.
+- ~~Establish a TypeScript and React build and development workflow.~~ — **Dropped**, no framework needed; see amendment above.
 - Create the main Launcher window and persistent profile. — **Done in Phase 1.**
-- Implement the HID device chooser as a React-based local application surface. — **Simplified per the amendment above:** a plain confirmation popup already exists and covers this; no multi-device chooser is needed.
+- ~~Implement the HID device chooser as a React-based local application surface.~~ — **Simplified per the amendment above:** a plain confirmation popup already exists and covers this; no multi-device chooser is needed.
 - Implement permission and navigation policies. — **Done in Phase 1.**
 - Restrict HID permissions to approved origins and devices. — **Partially done:** device filtering exists; origin validation is still an open gap.
 - Handle external URLs safely. — **Done in Phase 1.**
-- Add React-based offline, loading, and site-failure states.
+- Add offline, loading, and site-failure states (plain HTML/JS, not React).
 - Add structured, privacy-conscious application logging.
 - Add application metadata, icons, and desktop-friendly window behavior. — **Partially done:** window sizing/theming/menu exist; no custom app icon or `.desktop` file yet.
 
@@ -173,7 +175,7 @@ Exit criterion: detection, button remapping, macros, lighting, and all non-firmw
 
 Estimated effort: 2–3 working days.
 
-Add a React-based Advanced section reachable through the application menu or settings, leaving the normal Launcher page visually unchanged.
+Add an Advanced section (plain HTML/JS local popup, not React — see the architecture amendment above) reachable through the application menu or settings, leaving the normal Launcher page visually unchanged.
 
 Diagnostics should display:
 
@@ -250,47 +252,36 @@ Firmware support must not be inferred from ordinary configuration success.
 
 ## Proposed repository structure
 
+This is the original proposed structure and predates the architecture amendment above (no React/Vite). The structure actually built so far:
+
 ```text
 lgl-keychron-tool/
 ├── src/
-│   ├── main/
-│   │   ├── app.ts
-│   │   ├── launcher-window.ts
-│   │   ├── hid-permissions.ts
-│   │   ├── navigation-policy.ts
-│   │   └── diagnostics.ts
-│   ├── preload/
-│   │   └── local-app-bridge.ts
-│   ├── renderer/
-│   │   ├── app.tsx
-│   │   ├── components/
-│   │   ├── screens/
-│   │   │   ├── AdvancedDiagnostics.tsx
-│   │   │   ├── DeviceChooser.tsx
-│   │   │   ├── PermissionSetup.tsx
-│   │   │   └── SiteError.tsx
-│   │   └── styles/
-│   └── shared/
+│   └── main/
+│       ├── app.ts
+│       ├── app-menu.ts
+│       ├── launcher-window.ts
+│       ├── navigation-policy.ts
+│       ├── hid-permissions.ts
+│       ├── hid-device-access.ts
+│       ├── about-window.ts
+│       ├── device-confirm-window.ts
+│       └── permission-setup-window.ts
 ├── resources/
-│   ├── udev/
-│   ├── polkit/
-│   └── icons/
+│   ├── about/about.html
+│   ├── device-confirm/confirm.html
+│   ├── permission-setup/permission-setup.html
+│   └── udev/
+│       ├── 71-keychron-hid.rules
+│       └── install-keychron-udev-rule.sh
 ├── scripts/
-│   └── host-permission-helper
-├── tests/
-│   ├── unit/
-│   └── integration/
-├── docs/
-│   ├── development.md
-│   ├── testing-k4-he.md
-│   └── security.md
+│   └── package.mjs
 ├── package.json
 ├── tsconfig.json
-├── vite.config.ts
 └── README.md
 ```
 
-The proposed local UI build uses React, TypeScript, and Vite. The exact structure may change during the proof of concept, especially if the privileged helper is better implemented as a small compiled binary rather than a script.
+No `preload/`, `renderer/`, `tests/`, or `docs/` directories exist yet. Local screens are plain HTML/JS files under `resources/`, each paired with a small `*-window.ts` module in `src/main/` that creates its `BrowserWindow` and handles its no-IPC hash-navigation-based communication — not React components. A `tests/` directory and `docs/` will likely appear once Phase 6 work starts.
 
 ## Prototype completion criteria
 
@@ -348,4 +339,3 @@ Mitigation: verify the M7 8K behavior early and add a narrowly scoped block or w
 - Keychron M7 8K product information — TODO: add the correct product page URL (not guessed; please supply it)
 - [Electron WebHID device access](https://www.electronjs.org/docs/latest/tutorial/devices)
 - [Electron security guidance](https://www.electronjs.org/docs/latest/tutorial/security)
-- [React documentation](https://react.dev/)

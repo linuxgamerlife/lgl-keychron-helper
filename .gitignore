@@ -1,0 +1,27 @@
+# Installed dependencies
+node_modules/
+
+# Build and packaging output
+dist/
+out/
+
+# Test output
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+
+# Editor and filesystem metadata
+.directory
+.DS_Store
+*.swp
+*.swo
+
+# Local session handoff
+memory.md

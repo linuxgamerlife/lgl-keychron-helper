@@ -145,6 +145,14 @@ npm run build:main
 node_modules/electron/dist/electron .
 ```
 
+To produce a standalone runnable bundle (no `npm`/`node` needed to run it afterward — a quick way to share or test the app without a full Fedora RPM, which is a later, separate packaging task):
+
+```bash
+npm run package
+```
+
+This writes a self-contained build to `out/lgl-keychron-helper-linux-x64/`; run the `lgl-keychron-helper` binary inside it directly.
+
 > Do not commit `node_modules`, build output, test output, logs, or local environment files.
 
 ---

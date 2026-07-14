@@ -7,9 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `npm run package` (`scripts/package.mjs`, using `@electron/packager`'s JS API) produces a standalone, runnable Linux bundle in `./out` — no npm/Node install needed to run it afterward. Excludes TypeScript sources, docs, and dev-only files; only compiled `dist/main` and `resources/` ship. The packaged binary is named `lgl-keychron-helper` rather than "LGL Keychron Helper" — Electron Packager rejects names ending in a *space* followed by "Helper" (a macOS-only naming collision with Electron's own internal helper processes) even when targeting Linux; a hyphen avoids that restriction. This only affects the packaged executable's filename, not the app's displayed name anywhere else.
+
 ### Planned
 
-- Full React-based multi-device chooser, for the case of more than one Keychron device connected at once (the current confirmation popup always targets the first match).
+- Full Fedora RPM packaging (desktop entry, icons, bundled `udev` rule and privileged helper, clean install/upgrade/uninstall) — Phase 7 scope; `npm run package` above is a lightweight standalone bundle, not an installable system package.
 
 ## [0.1.0] - 2026-07-14
 
@@ -45,6 +49,6 @@ Initial Phase 1 scaffold: the smallest possible Electron application capable of 
 
 ### Known limitations
 
-- The device confirmation popup always targets the first Keychron-vendor-ID match; a full chooser for multiple simultaneously connected devices is Phase 2 scope.
+- The device confirmation popup always targets the first Keychron-vendor-ID match. This is by design, not a gap to fill later: Launcher itself already has its own UI for switching between multiple connected Keychron devices (observed with the Ultra-Link 8K dongle's keyboard/mouse detection screen), so this app's job is just gating individual WebHID grants one at a time, not building a parallel device-management UI.
 - Guided permission install needs a PolicyKit authentication agent running in the session to show the `pkexec` prompt at all; on non-standard desktop sessions (e.g. a bare KWin session without a full Plasma session running) one may not be auto-started. The app doesn't manage or start one itself — that's session-level configuration outside its scope — but if `pkexec` fails for this or any other reason, the popup now shows the equivalent manual commands as a fallback instead of leaving the user stuck.
 - No React/Vite renderer or diagnostics yet — those are later phases per `lgl-keychron-helper_projectplan.md`.

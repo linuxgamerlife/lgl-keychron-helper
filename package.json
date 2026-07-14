@@ -10,13 +10,15 @@
     "node": ">=22.12.0 <25"
   },
   "scripts": {
-    "build:main": "tsc -p tsconfig.json"
+    "build:main": "tsc -p tsconfig.json",
+    "package": "npm run build:main && node scripts/package.mjs"
   },
   "dependencies": {
     "react": "19.2.7",
     "react-dom": "19.2.7"
   },
   "devDependencies": {
+    "@electron/packager": "20.0.2",
     "@types/node": "24.13.3",
     "@types/react": "19.2.17",
     "@types/react-dom": "19.2.3",

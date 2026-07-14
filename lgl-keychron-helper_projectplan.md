@@ -103,17 +103,19 @@ Exit criterion: Launcher detects the wired M7 8K and reads its existing configur
 
 Estimated effort: 2–3 working days.
 
+**Amendment (2026-07-14):** the device chooser does not need to be a full multi-device selection UI. Keychron Launcher already has its own UI for switching between multiple connected Keychron devices (observed with the Ultra-Link 8K dongle's keyboard/mouse detection screen) — this app's job is only to gate individual WebHID grants one at a time, which the existing simple confirmation popup (`src/main/device-confirm-window.ts`) already does. Whether that popup and the other already-built local screens (About, permission setup) get retrofitted into React once a Vite workflow exists, versus staying as lightweight standalone HTML/JS, is an open decision — they already work well as-is.
+
 Turn the proof of concept into a maintainable application:
 
 - Establish a TypeScript and React build and development workflow.
-- Create the main Launcher window and persistent profile.
-- Implement the HID device chooser as a React-based local application surface.
-- Implement permission and navigation policies.
-- Restrict HID permissions to approved origins and devices.
-- Handle external URLs safely.
+- Create the main Launcher window and persistent profile. — **Done in Phase 1.**
+- Implement the HID device chooser as a React-based local application surface. — **Simplified per the amendment above:** a plain confirmation popup already exists and covers this; no multi-device chooser is needed.
+- Implement permission and navigation policies. — **Done in Phase 1.**
+- Restrict HID permissions to approved origins and devices. — **Partially done:** device filtering exists; origin validation is still an open gap.
+- Handle external URLs safely. — **Done in Phase 1.**
 - Add React-based offline, loading, and site-failure states.
 - Add structured, privacy-conscious application logging.
-- Add application metadata, icons, and desktop-friendly window behavior.
+- Add application metadata, icons, and desktop-friendly window behavior. — **Partially done:** window sizing/theming/menu exist; no custom app icon or `.desktop` file yet.
 
 Exit criterion: the app reliably reproduces the intended Keychron connection flow while maintaining the security boundaries above.
 

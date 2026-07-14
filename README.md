@@ -4,7 +4,7 @@
 
 **Configure supported Keychron devices on Linux — without installing or opening a separate Chromium browser.**
 
-[![Version](https://img.shields.io/badge/version-0.0.1-informational)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.1.0-informational)](CHANGELOG.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](#license)
 [![Fedora](https://img.shields.io/badge/Fedora-44-blue?logo=fedora&logoColor=white)](https://fedoraproject.org)
 [![Electron](https://img.shields.io/badge/Electron-43-47848f?logo=electron&logoColor=white)](https://www.electronjs.org)
@@ -23,8 +23,8 @@
 | | |
 |---|---|
 | **Application** | LGL Keychron Helper |
-| **Version** | v0.0.1 |
-| **Status** | Phase 1 — Electron shell scaffolded; Launcher loads; WebHID device recognition pending physical M7 8K testing |
+| **Version** | v0.1.0 |
+| **Status** | Phase 1 complete; Phase 3 (guided device permissions) in progress — Launcher loads and connects to a physical M7 8K, with an in-app popup to install the required `udev` rule via `pkexec` |
 | **License** | MIT |
 | **Author** | [LinuxGamerLife](https://www.youtube.com/@linuxgamerlife) |
 
@@ -158,9 +158,9 @@ node_modules/electron/dist/electron .
 - [x] Direct dependencies pinned and audited
 - [x] Electron main process scaffold
 - [x] Application menu, About window, and navigation controls
-- [ ] Keychron Launcher WebHID proof of concept (Launcher loads; device recognition pending physical M7 8K)
+- [x] Keychron Launcher WebHID proof of concept (confirmed connecting to a physical M7 8K)
+- [x] Guided Fedora device permissions (detects missing `hidraw` access and installs the `udev` rule via an in-app `pkexec` prompt)
 - [ ] React renderer and build workflow
-- [ ] Guided Fedora device permissions
 - [ ] M7 8K feature validation
 - [ ] Advanced diagnostics
 - [ ] Fedora RPM

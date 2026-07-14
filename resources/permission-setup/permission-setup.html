@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Device Permission Required</title>
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+
+      body {
+        margin: 0;
+        padding: 28px 24px;
+        background: #1c1a1e;
+        color: #f2f0f2;
+        font-family: system-ui, sans-serif;
+        text-align: center;
+      }
+
+      .icon {
+        font-size: 40px;
+        line-height: 1;
+        margin-bottom: 12px;
+      }
+
+      h1 {
+        font-size: 16px;
+        margin: 0 0 8px;
+      }
+
+      .description {
+        color: #b5b0b8;
+        font-size: 13px;
+        line-height: 1.4;
+        margin: 0 0 24px;
+      }
+
+      .buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      a.button {
+        display: block;
+        padding: 10px 16px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      a.primary {
+        background: #ff5f5f;
+        color: #1c1a1e;
+      }
+
+      a.secondary {
+        background: #2d2a30;
+        color: #f2f0f2;
+        border: 1px solid #45414a;
+      }
+
+      .error-message {
+        color: #ff9b9b;
+        font-size: 12px;
+        font-family: monospace;
+        white-space: pre-wrap;
+        text-align: left;
+        background: #2d2a30;
+        border-radius: 6px;
+        padding: 10px;
+        margin: 0 0 16px;
+        max-height: 90px;
+        overflow-y: auto;
+      }
+
+      .fallback-label {
+        color: #b5b0b8;
+        font-size: 12px;
+        text-align: left;
+        margin: 0 0 6px;
+      }
+
+      .fallback-commands {
+        color: #f2f0f2;
+        font-size: 12px;
+        font-family: monospace;
+        white-space: pre-wrap;
+        text-align: left;
+        background: #2d2a30;
+        border-radius: 6px;
+        padding: 10px;
+        margin: 0 0 20px;
+        user-select: text;
+      }
+
+      [id^='state-'][hidden] {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="state-prompt">
+      <div class="icon">🔒</div>
+      <h1>Device Permission Required</h1>
+      <p class="description">
+        LGL Keychron Helper needs one-time permission to access your Keychron device. This
+        installs a narrow rule that grants access only to verified Keychron devices — not
+        broader admin access to your system.
+      </p>
+      <div class="buttons">
+        <a class="button primary" href="#install">Install Device Permissions</a>
+        <a class="button secondary" href="#cancel">Cancel</a>
+      </div>
+    </div>
+
+    <div id="state-installing" hidden>
+      <div class="icon">🔒</div>
+      <h1>Waiting for Authentication…</h1>
+      <p class="description">Approve the system prompt to continue.</p>
+    </div>
+
+    <div id="state-success" hidden>
+      <div class="icon">✅</div>
+      <h1>Permissions Installed</h1>
+      <p class="description">
+        Please unplug and reconnect your Keychron device, then click Connect again in Launcher.
+      </p>
+      <div class="buttons">
+        <a class="button primary" href="#close">Close</a>
+      </div>
+    </div>
+
+    <div id="state-error" hidden>
+      <div class="icon">⚠️</div>
+      <h1>Could Not Install Permissions Automatically</h1>
+      <p class="error-message" id="error-message"></p>
+      <p class="fallback-label">
+        This can happen if your desktop session has no permission-prompt tool available. You can
+        run these commands in a terminal instead:
+      </p>
+      <p class="fallback-commands" id="fallback-commands"></p>
+      <div class="buttons">
+        <a class="button primary" href="#install">Try Again</a>
+        <a class="button secondary" href="#cancel">Cancel</a>
+      </div>
+    </div>
+
+    <script>
+      function showState(name) {
+        document.querySelectorAll('[id^="state-"]').forEach((el) => {
+          el.hidden = el.id !== `state-${name}`;
+        });
+      }
+
+      function showError(message, ruleSourcePath) {
+        document.getElementById('error-message').textContent = message;
+        document.getElementById('fallback-commands').textContent =
+          `sudo cp "${ruleSourcePath}" /etc/udev/rules.d/\n` +
+          'sudo udevadm control --reload\n' +
+          'sudo udevadm trigger';
+        showState('error');
+      }
+    </script>
+  </body>
+</html>

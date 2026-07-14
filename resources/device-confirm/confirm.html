@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Connect Device</title>
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+
+      body {
+        margin: 0;
+        padding: 28px 24px;
+        background: #1c1a1e;
+        color: #f2f0f2;
+        font-family: system-ui, sans-serif;
+        text-align: center;
+      }
+
+      .icon {
+        font-size: 40px;
+        line-height: 1;
+        margin-bottom: 12px;
+      }
+
+      h1 {
+        font-size: 16px;
+        margin: 0 0 8px;
+      }
+
+      .description {
+        color: #b5b0b8;
+        font-size: 13px;
+        line-height: 1.4;
+        margin: 0 0 24px;
+      }
+
+      .buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      a.button {
+        display: block;
+        padding: 10px 16px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      a.connect {
+        background: #ff5f5f;
+        color: #1c1a1e;
+      }
+
+      a.cancel {
+        background: #2d2a30;
+        color: #f2f0f2;
+        border: 1px solid #45414a;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="icon">⌨️</div>
+    <h1>Connect to <span id="device-name">this device</span>?</h1>
+    <p class="description">
+      LGL Keychron Helper wants to connect to this device so Keychron Launcher can read and
+      configure it.
+    </p>
+    <div class="buttons">
+      <a class="button connect" href="#connect">Connect</a>
+      <a class="button cancel" href="#cancel">Cancel</a>
+    </div>
+    <script>
+      const name = new URLSearchParams(window.location.search).get('name');
+      if (name) {
+        document.getElementById('device-name').textContent = name;
+      }
+    </script>
+  </body>
+</html>

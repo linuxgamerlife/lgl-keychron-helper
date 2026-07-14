@@ -1,0 +1,21 @@
+# Grants the active local user HID access to Keychron devices, so LGL Keychron Helper
+# (and Keychron Launcher running inside it) can open them without root.
+#
+# Scoped to Keychron's USB vendor ID (3434, confirmed via `lsusb` against a physical
+# Keychron M7 8K) rather than one specific product ID, so any current or future
+# Keychron HID device works without needing a rule update per device. This is
+# narrower than granting access to all HID devices, but broader than an exact
+# per-product allow-list — a deliberate tradeoff to support "any Keychron device"
+# without maintaining a product-ID list here.
+#
+# Uses TAG+="uaccess" (systemd-logind's per-seat ACL mechanism) rather than a
+# world-writable MODE, so access is limited to whoever is logged in at the
+# console, not every local user or process.
+#
+# Install:
+#   sudo cp resources/udev/71-keychron-hid.rules /etc/udev/rules.d/
+#   sudo udevadm control --reload
+#   sudo udevadm trigger
+# Then unplug and reconnect the device.
+
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="3434", TAG+="uaccess"

@@ -9,12 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Planned
 
-- React-based WebHID device chooser to replace the current auto-grant-first-match behavior.
-- Physical validation of the WebHID connection flow against a Keychron M7 8K.
+- Full React-based multi-device chooser, for the case of more than one Keychron device connected at once (the current confirmation popup always targets the first match).
 
-## [0.0.1] - 2026-07-14
+## [0.1.0] - 2026-07-14
 
-Initial Phase 1 scaffold: the smallest possible Electron application capable of loading the live Keychron Launcher and proving out the WebHID connection flow.
+Initial Phase 1 scaffold: the smallest possible Electron application capable of loading the live Keychron Launcher and proving out the WebHID connection flow. Also includes Phase 3's guided device-permission flow, built ahead of Phase 2.
 
 ### Added
 
@@ -30,14 +29,22 @@ Initial Phase 1 scaffold: the smallest possible Electron application capable of 
 - Pressing `Escape` closes the About popup.
 - Wayland server-side window decorations enabled (`enable-features=WaylandWindowDecorations`, `ozone-platform-hint=auto`) so the window border/titlebar follows the host compositor theme.
 - Fixed initial window size (1300×946), floored as the minimum resizable size.
+- `resources/udev/71-keychron-hid.rules`: a narrow `udev` rule (`TAG+="uaccess"`, scoped to Keychron's USB vendor ID `3434`) granting the active local user HID device access to any Keychron device, without a world-writable `MODE` and without touching other HID devices.
+- Device connection confirmation popup (`src/main/device-confirm-window.ts`, `resources/device-confirm/confirm.html`): Launcher can no longer connect to the mouse without the user explicitly clicking "Connect" — the previous behavior silently auto-granted the first matching device with no user interaction at all.
+- Guided device-permission setup (`src/main/permission-setup-window.ts`, `resources/permission-setup/permission-setup.html`, `resources/udev/install-keychron-udev-rule.sh`): before attempting to connect, the app now checks whether the matching `hidraw` device nodes are actually readable/writable (`src/main/hid-device-access.ts`, reading sysfs directly rather than trusting WebHID enumeration, which succeeds regardless of whether the node can actually be opened). If not, it shows a popup explaining why and offers to install the `udev` rule via a fixed-operation helper script invoked through `pkexec` — no arbitrary commands or paths, matching the shared privileged-operations standard. After a successful install it re-checks access (a currently-attached device may need to be replugged before the new rule applies) before proceeding to the connection-confirmation popup. If `pkexec` fails for any reason (most notably: no PolicyKit authentication agent running in the session, which is common on non-standard/tiling window manager setups), the popup falls back to showing the exact manual install commands with the real on-disk rule path, rather than leaving the user stuck on a raw error with no way forward.
 
 ### Changed
 
 - Initial validation target switched from the Keychron K4 HE (keyboard) to the Keychron M7 8K (mouse). This changes the prototype feature scope from keymap/actuation/Rapid Trigger/Snap Click to button mapping/DPI-sensitivity/polling rate/lift-off distance; see `README.md` and `lgl-keychron-helper_projectplan.md`.
+- `71-keychron-hid.rules` broadened from matching the M7 8K's exact product ID to matching Keychron's vendor ID only, so any Keychron HID device (not just this one) gets permission from a single rule. The WebHID filter and `hidraw` access check in `hid-permissions.ts`/`hid-device-access.ts` were already vendor-only — the rule was the one place still scoped to a single product, which meant any other Keychron device would enumerate fine but permanently fail the permission check.
+
+### Fixed
+
+- WebHID connection hung indefinitely (spinner, no error) when selecting the M7 8K in Launcher. Root cause: the kernel's `hidraw` device nodes for the mouse were `crw-------` root:root, so Chromium could enumerate the device (which only needs sysfs/USB descriptor info) but couldn't actually open it for read/write. Enumeration and the vendor-ID filter in `hid-permissions.ts` were both already correct. Fixed by the new `udev` rule above.
+- The guided permission-setup flow only ran inside the `select-hid-device` handler, which only fires for a *fresh* WebHID permission request. Once Launcher already holds a stored grant for a device (persisted in the `persist:launcher` session across restarts — by design, for cookies/settings), it silently tries to reopen the device directly on later loads without asking again, so `select-hid-device` never fires and the permission check never ran, even with a missing/removed `udev` rule. Fixed by adding `ensureKeychronDevicePermissions()` (`src/main/hid-permissions.ts`), which proactively scans for any connected Keychron `hidraw` device and offers to fix access as soon as the Launcher page finishes loading — independent of whether Launcher has made or will make a WebHID request at all.
 
 ### Known limitations
 
-- No user-facing device chooser yet — the first Keychron-vendor-ID HID device found is auto-granted. A React-based chooser is planned for Phase 2.
-- The Keychron USB vendor ID filter (`0x3434`) has not yet been verified against a physical device.
-- WebHID device recognition has not yet been validated against a real Keychron M7 8K.
-- No React/Vite renderer, Linux permission tooling, or diagnostics yet — those are later phases per `lgl-keychron-helper_projectplan.md`.
+- The device confirmation popup always targets the first Keychron-vendor-ID match; a full chooser for multiple simultaneously connected devices is Phase 2 scope.
+- Guided permission install needs a PolicyKit authentication agent running in the session to show the `pkexec` prompt at all; on non-standard desktop sessions (e.g. a bare KWin session without a full Plasma session running) one may not be auto-started. The app doesn't manage or start one itself — that's session-level configuration outside its scope — but if `pkexec` fails for this or any other reason, the popup now shows the equivalent manual commands as a fallback instead of leaving the user stuck.
+- No React/Vite renderer or diagnostics yet — those are later phases per `lgl-keychron-helper_projectplan.md`.

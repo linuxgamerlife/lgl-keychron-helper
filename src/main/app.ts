@@ -1,6 +1,6 @@
 import { app, BrowserWindow, session } from 'electron';
 import { createLauncherWindow } from './launcher-window.js';
-import { registerHidPermissions } from './hid-permissions.js';
+import { ensureKeychronDevicePermissions, registerHidPermissions } from './hid-permissions.js';
 import { registerNavigationPolicy } from './navigation-policy.js';
 import { registerApplicationMenu } from './app-menu.js';
 
@@ -18,6 +18,10 @@ function openLauncherWindow(): void {
 
   const window = createLauncherWindow(launcherSession);
   registerNavigationPolicy(window);
+
+  window.webContents.once('did-finish-load', () => {
+    void ensureKeychronDevicePermissions(window);
+  });
 }
 
 app.whenReady().then(() => {

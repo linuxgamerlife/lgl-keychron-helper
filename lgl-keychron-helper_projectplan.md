@@ -134,7 +134,9 @@ First-run behavior:
 7. Ask the user to reconnect the keyboard when necessary.
 8. Retry detection without restarting the app if possible.
 
-Initially target only verified M7 8K identifiers. Expansion to other products should use an audited device-ID list rather than granting access to every HID device.
+**Amendment (2026-07-14):** the implemented `udev` rule scopes access to Keychron's USB vendor ID (`3434`) rather than an exact per-product identifier list. This was a deliberate decision to support any Keychron HID device (not only the M7 8K) without maintaining a product-ID allow-list here, while still remaining far narrower than granting access to every HID device on the system. This differs from the original plan below, which called for a per-product audited list; that approach remains an option later if a narrower scope is ever needed (e.g. if a specific Keychron product line should be excluded), but is not implemented now.
+
+Original plan: initially target only verified M7 8K identifiers. Expansion to other products should use an audited device-ID list rather than granting access to every HID device.
 
 #### Distrobox consideration
 

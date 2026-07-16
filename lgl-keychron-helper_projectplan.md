@@ -181,17 +181,14 @@ Advanced actions may include:
 
 Exit criterion: common USB permission, website loading, and device-selection problems can be diagnosed without asking a user to start the app from a terminal.
 
-### Phase 6 — Testing and source prototype release
+### Phase 6 — Source prototype release
 
-**Amendment (2026-07-15):** `vitest` (the originally planned test runner) was removed from `package.json` along with React/Vite — see the architecture amendment above. No test runner is currently installed; one needs choosing when this phase starts. "Tests for Distrobox and host detection" below no longer applies as written — there is no Distrobox/host detection code, since the app is simply never launched inside the Distrobox at all (see the Phase 3 Distrobox-consideration amendment).
+**Amendment (2026-07-16):** automated tests (unit and integration) are out of scope. `vitest` was removed from `package.json` along with React/Vite (see the architecture amendment above), and the app has no non-trivial logic — permission decisions, navigation policy, and `udev` rule generation are thin, directly-observable wrappers around Electron/OS behavior — to justify the maintenance cost of a test suite. Manual verification against physical hardware remains the release gate.
 
-Estimated effort: 2–4 working days.
+Estimated effort: 1–2 working days.
 
 Add:
 
-- Unit tests for origin, navigation, and HID permission decisions.
-- Unit tests for `udev` rule generation and validation.
-- Electron integration tests using a local mock WebHID page where practical.
 - A physical-device M7 8K test checklist.
 - Fedora source-build and run instructions.
 - Troubleshooting and security documentation.
@@ -249,7 +246,7 @@ lgl-keychron-tool/
 └── README.md
 ```
 
-No `preload/`, `renderer/`, `tests/`, or `docs/` directories exist yet. Local screens are plain HTML/JS files under `resources/`, each paired with a small `*-window.ts` module in `src/main/` that creates its `BrowserWindow` and handles its no-IPC hash-navigation-based communication — not React components. A `tests/` directory and `docs/` will likely appear once Phase 6 work starts.
+No `preload/`, `renderer/`, or `docs/` directories exist yet. Local screens are plain HTML/JS files under `resources/`, each paired with a small `*-window.ts` module in `src/main/` that creates its `BrowserWindow` and handles its no-IPC hash-navigation-based communication — not React components. A `docs/` directory will likely appear once Phase 6 work starts.
 
 ## Prototype completion criteria
 

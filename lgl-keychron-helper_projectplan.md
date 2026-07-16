@@ -12,7 +12,7 @@ The first working prototype will target Fedora, run from source, and be validate
 - Development environment: Fedora 44 Distrobox.
 - Test desktop: custom KWin/Noctalia environment.
 - Initial device: Keychron M7 8K.
-- Connection: wired USB only for the prototype.
+- Connection: wired USB for the prototype. **Amendment (2026-07-16):** wireless connection via the Keychron-supplied dongle was also confirmed working through Launcher. Launcher itself displays a notice when the device is shown via the receiver: *"Please use a wired connection to upgrade your keyboard/mouse. This page is currently showing the receiver."* Use a wired connection for firmware updates.
 - Web application: <https://launcher.keychron.com/>.
 - UI strategy: preserve the official Keychron Launcher experience as closely as possible.
 - Network: an internet connection is required.
@@ -132,6 +132,8 @@ Exit criterion: a regular Fedora user can resolve a missing-device-permission fa
 ### Phase 4 — M7 8K feature validation
 
 **Amendment (2026-07-14):** confirmed working through Launcher's own interface — button mapping, macros, lighting, DPI/sensitivity, polling rate, and other controls all function correctly through the app's WebHID connection. Not every sub-item below was necessarily exercised exhaustively one by one, but general functionality is confirmed good.
+
+**Amendment (2026-07-16):** wireless connection via the Keychron-supplied dongle confirmed working as well, not just wired. Launcher itself warns against firmware updates over the receiver (see the "Agreed requirements" amendment above) — only configuration was validated over the dongle; treat wired as the required connection for any firmware update.
 
 Estimated effort: 3–5 working days.
 

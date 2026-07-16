@@ -54,8 +54,11 @@ LGL Keychron Helper is a Linux desktop wrapper for the official [Keychron Launch
 | **Development Environment** | Fedora 44 Distrobox |
 | **Runtime Environment** | Fedora host desktop |
 | **Initial Device** | Keychron M7 8K |
-| **Connection** | Wired USB |
+| **Connection** | Wired USB or wireless (Keychron dongle) |
 | **Web Configurator** | Keychron Launcher |
+
+> [!CAUTION]
+> Wireless (dongle) connection works for ordinary configuration, but Launcher itself displays this notice when a device is connected via the dongle: *"Please use a wired connection to upgrade your keyboard/mouse. This page is currently showing the receiver."* Use a wired connection for firmware updates.
 
 ---
 

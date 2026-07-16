@@ -145,14 +145,12 @@ Validate the following against the physical mouse:
 - Lighting effect, colour, brightness, saturation, and speed controls.
 - DPI/sensitivity stage configuration.
 - Polling rate configuration, including 8K operation.
-- Lift-off distance and other non-firmware controls exposed for the M7 8K.
+- Lift-off distance and other controls exposed for the M7 8K.
 - Configuration persistence on the mouse.
 - Site reload and application restart.
 - Graceful failure if USB is disconnected during an ordinary read or setting change.
 
-Firmware functionality should be treated as unsupported during this milestone. If Launcher exposes firmware controls, the app should block them or display an explicit unsupported warning until a separate safety and recovery design has been completed.
-
-Exit criterion: detection, button remapping, macros, lighting, and all non-firmware M7 8K configuration controls work reliably.
+Exit criterion: detection, button remapping, macros, lighting, and all M7 8K configuration controls work reliably.
 
 ### Phase 5 — Advanced diagnostics
 
@@ -220,22 +218,6 @@ Installation should place system permission files directly, avoiding a first-run
 
 Exit criterion: the application installs, launches, configures the M7 8K, upgrades, and uninstalls cleanly on supported Fedora versions.
 
-### Deferred milestone — Firmware support
-
-Firmware updates require separate research and safety work because an interrupted or incorrect flash can make a device unusable.
-
-Before enabling firmware controls, determine:
-
-- Which Linux interfaces and tools each supported device requires.
-- Bootloader and DFU USB identifiers.
-- Whether Keychron Launcher performs flashing directly or depends on a separate platform tool.
-- Recovery procedures for every supported flashing path.
-- Additional `udev` permissions required in bootloader mode.
-- How to prevent flashing the wrong model or firmware image.
-- How to handle power loss, disconnects, and partially completed updates.
-
-Firmware support must not be inferred from ordinary configuration success.
-
 ## Proposed repository structure
 
 This is the original proposed structure and predates the architecture amendment above (no React/Vite). The structure actually built so far:
@@ -277,7 +259,7 @@ The prototype is complete when a non-root Fedora user can:
 2. Open the live Keychron Launcher inside the application.
 3. Resolve missing USB permissions through a guided `pkexec` prompt.
 4. Select and connect a wired M7 8K through the intended Launcher flow.
-5. Use button remapping, macros, lighting, and all non-firmware controls.
+5. Use button remapping, macros, lighting, and all controls.
 6. Restart the app without losing Launcher site settings.
 7. ~~Diagnose common connection and permission failures from the Advanced section.~~ — **Dropped**, Advanced diagnostics is out of scope (see Phase 5 amendment); the guided permission popup already surfaces the one diagnostic that matters in the moment it's relevant.
 
@@ -312,12 +294,6 @@ Mitigation: **resolved by workflow** — the app is never launched inside the Di
 Electron exposes WebHID selection through application events and may not show the same chooser as Chrome automatically.
 
 Mitigation: **done.** `src/main/device-confirm-window.ts` implements a small native confirmation popup that preserves the same user decision and device information while leaving the rest of the Keychron flow unchanged.
-
-### Firmware controls remain visible
-
-Launcher may expose firmware features even though the prototype does not support them safely.
-
-Mitigation: verify the M7 8K behavior early and add a narrowly scoped block or warning without modifying unrelated Launcher functionality.
 
 ## References
 

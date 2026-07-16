@@ -26,6 +26,7 @@
 | **Status** | Functional prototype: Launcher loads, connects to a physical M7 8K, and guides the user through installing the required `udev` permission via an in-app `pkexec` prompt when needed |
 | **License** | MIT |
 | **Author** | [LinuxGamerLife](https://www.youtube.com/@linuxgamerlife) |
+| **AI Transparency** | [Disclosure](https://github.com/linuxgamerlife#ai-transparency) |
 
 See [CHANGELOG.md](CHANGELOG.md) for a detailed history of changes.
 

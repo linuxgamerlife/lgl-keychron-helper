@@ -10,7 +10,7 @@ The first working prototype will target Fedora, run from source, and be validate
 
 - Platform: Linux, with Fedora as the initial target.
 - Development environment: Fedora 44 Distrobox.
-- Test desktop: custom KWin/Noctalia environment.
+- Test desktop: KineticWE (custom KWin/Noctalia environment)
 - Initial device: Keychron M7 8K.
 - Connection: wired USB for the prototype. **Amendment (2026-07-16):** wireless connection via the Keychron-supplied dongle was also confirmed working through Launcher. Launcher itself displays a notice when the device is shown via the receiver: *"Please use a wired connection to upgrade your keyboard/mouse. This page is currently showing the receiver."* Use a wired connection for firmware updates.
 - Web application: <https://launcher.keychron.com/>.

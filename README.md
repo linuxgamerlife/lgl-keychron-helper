@@ -97,7 +97,7 @@ Remote Launcher content is treated as untrusted web content even though it is su
 - Context isolation and renderer sandboxing are enabled
 - Hardware access is restricted to verified Keychron devices by USB vendor ID (origin validation is not yet implemented, tracked as a known gap)
 - Unrelated browser permissions are denied by default
-- Navigation, popups, and external URLs are controlled (download interception is not yet implemented, tracked as a known gap)
+- Navigation, popups, and external URLs are controlled; downloads are intercepted and routed through a save dialog rather than saving silently
 - Trusted local content is separated from the remote website
 - Native operations use narrow, typed, validated interfaces
 - The remote website receives no arbitrary shell or filesystem access

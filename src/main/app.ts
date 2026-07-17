@@ -2,6 +2,7 @@ import { app, BrowserWindow, session } from 'electron';
 import { createLauncherWindow } from './launcher-window.js';
 import { ensureKeychronDevicePermissions, registerHidPermissions } from './hid-permissions.js';
 import { registerNavigationPolicy } from './navigation-policy.js';
+import { registerDownloadPolicy } from './download-policy.js';
 import { registerApplicationMenu } from './app-menu.js';
 
 // Ask the Wayland compositor (KWin) to draw the window border/titlebar itself so it
@@ -15,6 +16,7 @@ const LAUNCHER_PARTITION = 'persist:launcher';
 function openLauncherWindow(): void {
   const launcherSession = session.fromPartition(LAUNCHER_PARTITION);
   registerHidPermissions(launcherSession);
+  registerDownloadPolicy(launcherSession);
 
   const window = createLauncherWindow(launcherSession);
   registerNavigationPolicy(window);

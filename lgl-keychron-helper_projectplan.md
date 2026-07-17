@@ -59,7 +59,7 @@ Required controls:
 - Prevent the remote page from navigating the main window to an untrusted origin.
 - Do not enable Chromium's HID blocklist override unless testing proves that a required M7 8K interface is blocked and the exception can be narrowly justified.
 - Do not log HID report contents, macro contents, key assignments, or device serial numbers by default.
-- Intercept downloads (`session.on('will-download', ...)`): **not yet implemented**, known gap.
+- Intercept downloads (`session.on('will-download', ...)`): **done.** `src/main/download-policy.ts` routes every download through the native save dialog instead of letting it save silently, without blocking legitimate downloads outright.
 
 ## Project phases
 

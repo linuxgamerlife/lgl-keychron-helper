@@ -18,6 +18,14 @@ await packager({
   arch: 'x64',
   out: 'out',
   overwrite: true,
+  // resources/udev/ must stay unpacked: pkexec spawns a real OS process to run
+  // install-keychron-udev-rule.sh, and external processes can't open a path
+  // "inside" app.asar (it's a single opaque file on disk to anything other than
+  // Electron's own patched fs/net APIs). Unpacking puts a real copy alongside
+  // app.asar at app.asar.unpacked/resources/udev/ instead.
+  asar: {
+    unpackDir: 'resources/udev',
+  },
   ignore: [
     /^\/node_modules/,
     /^\/src/,

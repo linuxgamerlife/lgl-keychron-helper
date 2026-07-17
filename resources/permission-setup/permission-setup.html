@@ -8,6 +8,11 @@
         color-scheme: dark;
       }
 
+      html,
+      body {
+        height: 100%;
+      }
+
       body {
         margin: 0;
         padding: 28px 24px;
@@ -15,6 +20,8 @@
         color: #f2f0f2;
         font-family: system-ui, sans-serif;
         text-align: center;
+        overflow-y: auto;
+        box-sizing: border-box;
       }
 
       .icon {
@@ -41,21 +48,26 @@
         gap: 10px;
       }
 
-      a.button {
+      .button {
         display: block;
+        width: 100%;
+        box-sizing: border-box;
         padding: 10px 16px;
         border-radius: 6px;
+        border: none;
         text-decoration: none;
+        font-family: inherit;
         font-size: 13px;
         font-weight: 600;
+        cursor: pointer;
       }
 
-      a.primary {
+      .primary {
         background: #ff5f5f;
         color: #1c1a1e;
       }
 
-      a.secondary {
+      .secondary {
         background: #2d2a30;
         color: #f2f0f2;
         border: 1px solid #45414a;
@@ -95,6 +107,21 @@
         user-select: text;
       }
 
+      .script-view {
+        color: #f2f0f2;
+        font-size: 12px;
+        font-family: monospace;
+        white-space: pre-wrap;
+        text-align: left;
+        background: #2d2a30;
+        border-radius: 6px;
+        padding: 10px;
+        margin: 12px 0 0;
+        max-height: 50vh;
+        overflow-y: auto;
+        user-select: text;
+      }
+
       [id^='state-'][hidden] {
         display: none;
       }
@@ -106,13 +133,22 @@
       <h1>Device Permission Required</h1>
       <p class="description">
         LGL Keychron Helper needs one-time permission to access your Keychron device. This
-        installs a narrow rule that grants access only to verified Keychron devices — not
+        installs a narrow rule that grants access only to verified Keychron devices, not
         broader admin access to your system.
+      </p>
+      <p class="description">
+        Note: if you are happy to continue, click Install Device Permissions and you will be
+        presented with your usual authentication window. This will be used to apply the udev
+        rule needed to manage Keychron devices within the app.
       </p>
       <div class="buttons">
         <a class="button primary" href="#install">Install Device Permissions</a>
         <a class="button secondary" href="#cancel">Cancel</a>
+        <button type="button" class="button secondary" id="view-script-btn" onclick="toggleScript()">
+          View Install Script
+        </button>
       </div>
+      <pre class="script-view" id="script-view" hidden></pre>
     </div>
 
     <div id="state-installing" hidden>
@@ -148,6 +184,16 @@
     </div>
 
     <script>
+      const scriptContents = new URLSearchParams(location.search).get('script') || '';
+      document.getElementById('script-view').textContent = scriptContents;
+
+      function toggleScript() {
+        const view = document.getElementById('script-view');
+        const button = document.getElementById('view-script-btn');
+        view.hidden = !view.hidden;
+        button.textContent = view.hidden ? 'View Install Script' : 'Hide Install Script';
+      }
+
       function showState(name) {
         document.querySelectorAll('[id^="state-"]').forEach((el) => {
           el.hidden = el.id !== `state-${name}`;

@@ -192,23 +192,27 @@ Exit criterion: another Fedora user can follow the documentation, run the protot
 
 Begin after the source prototype is stable.
 
+**Amendment (2026-07-17):** Fedora has no official system Electron package (confirmed: no package in Fedora's repos, an open upstream request at [electron/electron#44886](https://github.com/electron/electron/issues/44886), and an unresolved Fedora Discussion thread on whether a packaging policy even exists yet). The RPM therefore bundles Electron itself, same as the existing `npm run package` convenience build, rather than declaring `Requires: electron`.
+
 The RPM should provide:
 
-- The packaged Electron application.
-- Desktop entry, icons, and application metadata.
-- The audited `udev` rule or rule set.
-- The minimal privileged helper and required PolicyKit policy.
-- Clean installation and removal behavior.
-- Fedora dependency declarations.
+- The packaged Electron application. **Done** — `packaging/lgl-keychron-helper.spec` installs the `npm run package` output to `/usr/lib/lgl-keychron-helper/`, with a thin `/usr/bin/lgl-keychron-helper` launcher.
+- Desktop entry, icons, and application metadata. **Done** — `packaging/lgl-keychron-helper.desktop`, `packaging/icons/hicolor/` (9 sizes generated from `resources/lgl-keychron-helper.png`), and every `BrowserWindow` now sets a real `icon:`.
+- The audited `udev` rule or rule set. **Done** — installed both as the active rule (`%{_udevrulesdir}/71-keychron-hid.rules`) and mirrored at a fixed path for PolicyKit matching (see below).
+- The minimal privileged helper and required PolicyKit policy. **Done** — `packaging/com.linuxgamerlife.lgl-keychron-helper.policy` defines two actions (install/remove), matched via `org.freedesktop.policykit.exec.path` against `/usr/libexec/lgl-keychron-helper/`. `src/main/udev-paths.ts`'s `resolveUdevDir()` prefers that fixed path when present, falling back to the existing dev/bundled resolution otherwise.
+- Clean installation and removal behavior. **Partially done** — `%post`/`%postun` reload udev rules and re-trigger `hidraw` devices (guarded with `|| :`, matching what the app's own install script already does). Full install/upgrade/uninstall cycle not yet tested against a real build.
+- Fedora dependency declarations. **Done** — `Requires: polkit`, `Requires: systemd-udev`; no `Requires: electron` per the amendment above.
 
-Installation should place system permission files directly, avoiding a first-run `pkexec` prompt when the package installation has already completed the necessary setup.
+Installation places the udev rule directly (`%post` reload/trigger, no first-run `pkexec` prompt needed for a fresh package install), while the app's own in-app Install/Remove Device Permissions flow remains available as a fallback/manual-override.
 
-Exit criterion: the application installs, launches, configures the M7 8K, upgrades, and uninstalls cleanly on supported Fedora versions.
+**Known gap in the current `.spec` file:** `%build` runs `npm ci` + `npm run package`, which needs network access (`@electron/packager` downloads a prebuilt Electron binary via `electron`'s own postinstall step). Fedora's official koji/mock build environment disables network access by default, so this spec currently targets local `rpmbuild`/COPR-with-networking-enabled use, not an unmodified official Fedora build. Vendoring dependencies for a fully hermetic build is a deliberate follow-up, not done here — consistent with deprioritizing CI-based builds, signing, and checksums for now.
+
+Exit criterion: the application installs, launches, configures the M7 8K, upgrades, and uninstalls cleanly on supported Fedora versions. **Not yet verified** — the `.spec` file is an untested first draft.
 
 **Pending items for this phase:**
 
 - [x] Add a close button to the About popup.
-- [ ] Bump `package.json` version to `1.0.0` for the RPM release.
+- [x] Bump `package.json` version to `1.0.0` for the RPM release.
 
 ## Proposed repository structure
 

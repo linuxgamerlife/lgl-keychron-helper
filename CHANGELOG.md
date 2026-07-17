@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-07-17
+
 ### Added
 
 - `npm run package` (`scripts/package.mjs`, using `@electron/packager`'s JS API) produces a standalone, runnable Linux bundle in `./out`: no npm/Node install needed to run it afterward. Excludes TypeScript sources, docs, and dev-only files; only compiled `dist/main` and `resources/` ship. The packaged binary is named `lgl-keychron-helper` rather than "LGL Keychron Helper": Electron Packager rejects names ending in a *space* followed by "Helper" (a macOS-only naming collision with Electron's own internal helper processes) even when targeting Linux; a hyphen avoids that restriction. This only affects the packaged executable's filename, not the app's displayed name anywhere else.

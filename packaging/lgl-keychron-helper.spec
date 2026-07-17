@@ -22,7 +22,11 @@ URL:            https://github.com/linuxgamerlife/lgl-keychron-tool
 # COPR (or any) build can fetch it.
 Source0:        https://github.com/linuxgamerlife/lgl-keychron-tool/archive/refs/tags/v%{version}/%{name}-%{version}.tar.gz
 
-BuildArch:      x86_64
+# BuildArch is only valid as "noarch"; a real arch name there breaks
+# rpmbuild's SRPM generation ("No compatible architectures found for build").
+# This package bundles prebuilt x86_64-only Electron binaries, so restrict
+# eligible build architectures with ExclusiveArch instead.
+ExclusiveArch:  x86_64
 BuildRequires:  nodejs >= 22
 BuildRequires:  npm
 BuildRequires:  desktop-file-utils

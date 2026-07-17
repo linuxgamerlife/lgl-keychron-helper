@@ -13,7 +13,14 @@ Summary:        Linux desktop helper for configuring supported Keychron devices 
 
 License:        MIT
 URL:            https://github.com/linuxgamerlife/lgl-keychron-tool
-Source0:        %{name}-%{version}.tar.gz
+# GitHub's archive endpoint names the top-level directory after the repo
+# (lgl-keychron-tool), not the package (lgl-keychron-helper), and strips a
+# leading "v" from numeric tags — so tag v%{version} unpacks to
+# lgl-keychron-tool-%{version}. The trailing /%{name}-%{version}.tar.gz segment
+# is just a friendly download filename; GitHub ignores it and serves the same
+# archive regardless. Requires a `v%{version}` tag to exist on GitHub before a
+# COPR (or any) build can fetch it.
+Source0:        https://github.com/linuxgamerlife/lgl-keychron-tool/archive/refs/tags/v%{version}/%{name}-%{version}.tar.gz
 
 BuildArch:      x86_64
 BuildRequires:  nodejs >= 22
@@ -25,12 +32,14 @@ Requires:       polkit
 Requires:       systemd-udev
 
 # @electron/packager downloads a prebuilt Electron binary during `npm ci`
-# (electron's own postinstall step), so %build needs network access. Fedora's
-# official koji/mock build environment disables network access by default, so
-# this spec currently targets local `rpmbuild`/COPR-with-networking-enabled use,
-# not an unmodified official Fedora build. Vendoring node_modules (or building
-# from a pre-populated source tarball) would be needed to make this hermetic;
-# that's a deliberate follow-up, not done here.
+# (electron's own postinstall step), so %build needs network access. This is
+# separate from Source0 fetching above (COPR/mock always allows network access
+# to fetch declared Sources, regardless of project settings) — %build's network
+# need specifically requires COPR's "Enable networking during builds" project
+# option, since Fedora's official koji/mock build environment disables network
+# access during %build/%install by default otherwise. Vendoring node_modules
+# would be needed to make this hermetic; that's a deliberate follow-up, not
+# done here.
 
 %description
 LGL Keychron Helper is a Linux desktop wrapper for the official Keychron
@@ -39,7 +48,7 @@ provides WebHID device access, and guides users through Linux USB permissions
 via a narrow, audited udev rule installed through PolicyKit.
 
 %prep
-%setup -q
+%setup -q -n lgl-keychron-tool-%{version}
 
 %build
 npm ci

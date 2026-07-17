@@ -18,6 +18,7 @@ export function showAboutWindow(parent: BrowserWindow | null): void {
     fullscreenable: false,
     autoHideMenuBar: true,
     title: 'About LGL Keychron Helper',
+    icon: path.join(app.getAppPath(), 'resources', 'icon.png'),
     parent: parent ?? undefined,
     modal: parent !== null,
     webPreferences: {

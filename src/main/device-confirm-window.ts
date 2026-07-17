@@ -28,6 +28,7 @@ export function confirmDeviceConnection(
       fullscreenable: false,
       autoHideMenuBar: true,
       title: 'Connect Device',
+      icon: path.join(app.getAppPath(), 'resources', 'icon.png'),
       parent: parent ?? undefined,
       modal: parent !== null,
       webPreferences: {

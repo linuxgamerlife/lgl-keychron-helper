@@ -33,6 +33,7 @@ export function showPermissionSetupWindow(parent: BrowserWindow | null): Promise
       fullscreenable: false,
       autoHideMenuBar: true,
       title: 'Device Permission Required',
+      icon: path.join(app.getAppPath(), 'resources', 'icon.png'),
       parent: parent ?? undefined,
       modal: parent !== null,
       webPreferences: {

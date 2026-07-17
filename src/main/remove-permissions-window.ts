@@ -22,6 +22,7 @@ export function showRemovePermissionsWindow(parent: BrowserWindow | null): void 
     fullscreenable: false,
     autoHideMenuBar: true,
     title: 'Remove Device Permissions',
+    icon: path.join(app.getAppPath(), 'resources', 'icon.png'),
     parent: parent ?? undefined,
     modal: parent !== null,
     webPreferences: {

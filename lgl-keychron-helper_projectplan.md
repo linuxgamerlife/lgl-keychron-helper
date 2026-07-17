@@ -92,7 +92,7 @@ Turn the proof of concept into a maintainable application:
 - Handle external URLs safely. **Done in Phase 1.**
 - Add offline, loading, and site-failure states (plain HTML/JS, not React).
 - Add structured, privacy-conscious application logging.
-- Add application metadata, icons, and desktop-friendly window behavior. **Partially done:** window sizing/theming/menu exist; no custom app icon or `.desktop` file yet.
+- Add application metadata, icons, and desktop-friendly window behavior. **Done.** Window sizing/theming/menu exist; every `BrowserWindow` sets `icon: resources/icon.png`; `packaging/lgl-keychron-helper.desktop` and a full `packaging/icons/hicolor/` set are ready for RPM installation.
 
 Exit criterion: the app reliably reproduces the intended Keychron connection flow while maintaining the security boundaries above.
 

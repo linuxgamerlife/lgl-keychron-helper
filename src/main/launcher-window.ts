@@ -1,4 +1,5 @@
-import { BrowserWindow, type Session } from 'electron';
+import { app, BrowserWindow, type Session } from 'electron';
+import path from 'node:path';
 
 export const LAUNCHER_URL = 'https://launcher.keychron.com/';
 
@@ -9,6 +10,7 @@ export function createLauncherWindow(launcherSession: Session): BrowserWindow {
     minWidth: 1300,
     minHeight: 946,
     title: 'LGL Keychron Helper',
+    icon: path.join(app.getAppPath(), 'resources', 'icon.png'),
     webPreferences: {
       session: launcherSession,
       nodeIntegration: false,

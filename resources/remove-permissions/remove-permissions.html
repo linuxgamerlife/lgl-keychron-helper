@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Remove Device Permissions</title>
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        padding: 28px 24px;
+        background: #1c1a1e;
+        color: #f2f0f2;
+        font-family: system-ui, sans-serif;
+        text-align: center;
+        overflow-y: auto;
+        box-sizing: border-box;
+      }
+
+      .icon {
+        font-size: 40px;
+        line-height: 1;
+        margin-bottom: 12px;
+      }
+
+      h1 {
+        font-size: 16px;
+        margin: 0 0 8px;
+      }
+
+      .description {
+        color: #b5b0b8;
+        font-size: 13px;
+        line-height: 1.4;
+        margin: 0 0 24px;
+      }
+
+      .buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .button {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px 16px;
+        border-radius: 6px;
+        border: none;
+        text-decoration: none;
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .primary {
+        background: #ff5f5f;
+        color: #1c1a1e;
+      }
+
+      .secondary {
+        background: #2d2a30;
+        color: #f2f0f2;
+        border: 1px solid #45414a;
+      }
+
+      .error-message {
+        color: #ff9b9b;
+        font-size: 12px;
+        font-family: monospace;
+        white-space: pre-wrap;
+        text-align: left;
+        background: #2d2a30;
+        border-radius: 6px;
+        padding: 10px;
+        margin: 0 0 16px;
+        max-height: 90px;
+        overflow-y: auto;
+      }
+
+      .fallback-label {
+        color: #b5b0b8;
+        font-size: 12px;
+        text-align: left;
+        margin: 0 0 6px;
+      }
+
+      .fallback-commands {
+        color: #f2f0f2;
+        font-size: 12px;
+        font-family: monospace;
+        white-space: pre-wrap;
+        text-align: left;
+        background: #2d2a30;
+        border-radius: 6px;
+        padding: 10px;
+        margin: 0 0 20px;
+        user-select: text;
+      }
+
+      .script-view {
+        color: #f2f0f2;
+        font-size: 12px;
+        font-family: monospace;
+        white-space: pre-wrap;
+        text-align: left;
+        background: #2d2a30;
+        border-radius: 6px;
+        padding: 10px;
+        margin: 12px 0 0;
+        max-height: 50vh;
+        overflow-y: auto;
+        user-select: text;
+      }
+
+      [id^='state-'][hidden] {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="state-prompt">
+      <div class="icon">🗑️</div>
+      <h1>Remove Device Permissions</h1>
+      <p class="description">
+        This removes the udev rule that lets LGL Keychron Helper access Keychron devices. You'll
+        need to reinstall it (the app will offer to, automatically) before it can access a
+        Keychron device again.
+      </p>
+      <p class="description">
+        Note: if you are happy to continue, click Remove Device Permissions and you will be
+        presented with your usual authentication window.
+      </p>
+      <div class="buttons">
+        <a class="button primary" href="#remove">Remove Device Permissions</a>
+        <a class="button secondary" href="#cancel">Cancel</a>
+        <button type="button" class="button secondary" id="view-script-btn" onclick="toggleScript()">
+          View Removal Script
+        </button>
+      </div>
+      <pre class="script-view" id="script-view" hidden></pre>
+    </div>
+
+    <div id="state-removing" hidden>
+      <div class="icon">🔒</div>
+      <h1>Waiting for Authentication…</h1>
+      <p class="description">Approve the system prompt to continue.</p>
+    </div>
+
+    <div id="state-removed" hidden>
+      <div class="icon">✅</div>
+      <h1>Permissions Removed</h1>
+      <p class="description">
+        Keychron devices will lose HID access the next time they are unplugged and reconnected.
+      </p>
+      <div class="buttons">
+        <a class="button primary" href="#close">Close</a>
+      </div>
+    </div>
+
+    <div id="state-error" hidden>
+      <div class="icon">⚠️</div>
+      <h1>Could Not Remove Permissions Automatically</h1>
+      <p class="error-message" id="error-message"></p>
+      <p class="fallback-label">
+        This can happen if your desktop session has no permission-prompt tool available. You can
+        run these commands in a terminal instead:
+      </p>
+      <p class="fallback-commands" id="fallback-commands"></p>
+      <div class="buttons">
+        <a class="button primary" href="#remove">Try Again</a>
+        <a class="button secondary" href="#cancel">Cancel</a>
+      </div>
+    </div>
+
+    <script>
+      const scriptContents = new URLSearchParams(location.search).get('script') || '';
+      document.getElementById('script-view').textContent = scriptContents;
+
+      function toggleScript() {
+        const view = document.getElementById('script-view');
+        const button = document.getElementById('view-script-btn');
+        view.hidden = !view.hidden;
+        button.textContent = view.hidden ? 'View Removal Script' : 'Hide Removal Script';
+      }
+
+      function showState(name) {
+        document.querySelectorAll('[id^="state-"]').forEach((el) => {
+          el.hidden = el.id !== `state-${name}`;
+        });
+      }
+
+      function showError(message, fallbackCommands) {
+        document.getElementById('error-message').textContent = message;
+        document.getElementById('fallback-commands').textContent = fallbackCommands;
+        showState('error');
+      }
+    </script>
+  </body>
+</html>

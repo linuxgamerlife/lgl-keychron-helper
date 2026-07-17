@@ -54,6 +54,12 @@ rm -rf %{buildroot}
 # %{_libdir} (/usr/lib64 on x86_64).
 install -d %{buildroot}%{_prefix}/lib/%{name}
 cp -a out/%{name}-linux-x64/. %{buildroot}%{_prefix}/lib/%{name}/
+# @electron/packager creates its output directory (and only that top-level
+# directory) with mode 0700 — fine for a local dev output folder, but cp -a
+# preserves that into the buildroot, which would block every non-root user
+# from even traversing into the installed app directory. Individual file
+# permissions are already correct; only the directory traversal bit is wrong.
+chmod -R a+rX %{buildroot}%{_prefix}/lib/%{name}
 
 # Thin launcher script on PATH.
 install -d %{buildroot}%{_bindir}

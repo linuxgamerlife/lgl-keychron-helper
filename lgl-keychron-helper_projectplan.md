@@ -200,14 +200,14 @@ The RPM should provide:
 - Desktop entry, icons, and application metadata. **Done** — `packaging/lgl-keychron-helper.desktop`, `packaging/icons/hicolor/` (9 sizes generated from `resources/lgl-keychron-helper.png`), and every `BrowserWindow` now sets a real `icon:`.
 - The audited `udev` rule or rule set. **Done** — installed both as the active rule (`%{_udevrulesdir}/71-keychron-hid.rules`) and mirrored at a fixed path for PolicyKit matching (see below).
 - The minimal privileged helper and required PolicyKit policy. **Done** — `packaging/com.linuxgamerlife.lgl-keychron-helper.policy` defines two actions (install/remove), matched via `org.freedesktop.policykit.exec.path` against `/usr/libexec/lgl-keychron-helper/`. `src/main/udev-paths.ts`'s `resolveUdevDir()` prefers that fixed path when present, falling back to the existing dev/bundled resolution otherwise.
-- Clean installation and removal behavior. **Partially done** — `%post`/`%postun` reload udev rules and re-trigger `hidraw` devices (guarded with `|| :`, matching what the app's own install script already does). Full install/upgrade/uninstall cycle not yet tested against a real build.
+- Clean installation and removal behavior. **Partially done** — `%post`/`%postun` reload udev rules and re-trigger `hidraw` devices (guarded with `|| :`, matching what the app's own install script already does). Built with `rpmbuild` and verified via `dnf install`/`dnf reinstall` inside a Fedora 44 Distrobox: file layout, permissions, `desktop-file-validate`, and a full `rpm -V` all came back clean. Not yet tested: a true version-to-version upgrade, and a full `dnf remove` (uninstall) cycle.
 - Fedora dependency declarations. **Done** — `Requires: polkit`, `Requires: systemd-udev`; no `Requires: electron` per the amendment above.
 
 Installation places the udev rule directly (`%post` reload/trigger, no first-run `pkexec` prompt needed for a fresh package install), while the app's own in-app Install/Remove Device Permissions flow remains available as a fallback/manual-override.
 
 **Known gap in the current `.spec` file:** `%build` runs `npm ci` + `npm run package`, which needs network access (`@electron/packager` downloads a prebuilt Electron binary via `electron`'s own postinstall step). Fedora's official koji/mock build environment disables network access by default, so this spec currently targets local `rpmbuild`/COPR-with-networking-enabled use, not an unmodified official Fedora build. Vendoring dependencies for a fully hermetic build is a deliberate follow-up, not done here — consistent with deprioritizing CI-based builds, signing, and checksums for now.
 
-Exit criterion: the application installs, launches, configures the M7 8K, upgrades, and uninstalls cleanly on supported Fedora versions. **Not yet verified** — the `.spec` file is an untested first draft.
+Exit criterion: the application installs, launches, configures the M7 8K, upgrades, and uninstalls cleanly on supported Fedora versions. **Partially verified** — install/reinstall tested clean via `rpmbuild`/`dnf` inside a Fedora 44 Distrobox (see above); launching the installed app against a physical M7 8K, a true version upgrade, and a full uninstall are not yet tested.
 
 **Pending items for this phase:**
 

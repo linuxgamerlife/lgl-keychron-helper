@@ -23,7 +23,7 @@
 |----|----|
 | **Application** | LGL Keychron Helper |
 | **Version**    | v1.0.0 |
-| **Status**    | Functional prototype: Launcher loads, connects to a physical M7 8K, and guides the user through installing the required `udev` permission via an in-app `pkexec` prompt when needed |
+| **Status**    | Functional: Launcher loads, connects to a physical M7 8K, and guides the user through installing (and, if needed, removing) the required `udev` permission via an in-app `pkexec` prompt. Packaged as a Fedora RPM, built and locally verified; not yet published to COPR |
 | **License**    | MIT |
 | **Author**    | [LinuxGamerLife](https://www.youtube.com/@linuxgamerlife) |
 | **AI Use**    | I use generative AI as a support tool when creating scripts, tools, and software. AI assists with tasks such as writing code, explaining technical concepts, and generating implementation ideas.[...more](https://github.com/linuxgamerlife#ai-transparency) |
@@ -43,7 +43,7 @@ LGL Keychron Helper is a Linux desktop wrapper for the official [Keychron Launch
 - Targets a source-built prototype followed by distribution via Fedora COPR
 
 > [!NOTE]
-> This is a working prototype: it connects to a physical Keychron device and lets Launcher read and configure it. An application icon and Fedora RPM/COPR packaging are still in progress.
+> This connects to a physical Keychron device and lets Launcher read and configure it. A Fedora RPM is built and locally verified (`packaging/lgl-keychron-helper.spec`); publishing it to Fedora COPR is still pending.
 
 ---
 
@@ -118,7 +118,8 @@ Linux device access uses a narrow `udev` rule installed through a `pkexec`-invok
 - [x] Keychron Launcher WebHID proof of concept (confirmed connecting to a physical M7 8K)
 - [x] Guided Fedora device permissions (detects missing `hidraw` access and installs the `udev` rule via an in-app `pkexec` prompt)
 - [x] M7 8K feature validation (button mapping, macros, lighting, DPI, polling rate, and other controls confirmed working through Launcher)
-- [ ] Fedora RPM
+- [x] Fedora RPM (`packaging/lgl-keychron-helper.spec`; built and locally verified via `rpmbuild`/`dnf install`)
+- [ ] Published to Fedora COPR
 
 See [lgl-keychron-helper_projectplan.md](lgl-keychron-helper_projectplan.md) for the detailed implementation plan and acceptance criteria.
 

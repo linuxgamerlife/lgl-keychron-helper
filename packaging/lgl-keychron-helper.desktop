@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=LGL Keychron Helper
+Comment=Configure supported Keychron devices on Linux
+Exec=lgl-keychron-helper
+Icon=lgl-keychron-helper
+Terminal=false
+Categories=Utility;HardwareSettings;
+Keywords=keyboard;mouse;keychron;
+StartupWMClass=lgl-keychron-helper

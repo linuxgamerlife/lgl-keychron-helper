@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policyconfig PUBLIC "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/PolicyKit/1/policyconfig.dtd">
+<policyconfig>
+  <vendor>LinuxGamerLife</vendor>
+  <vendor_url>https://github.com/linuxgamerlife</vendor_url>
+  <icon_name>lgl-keychron-helper</icon_name>
+
+  <!--
+    Matched by pkexec via the org.freedesktop.policykit.exec.path annotation below,
+    which requires the invoked script to live at a fixed, RPM-owned path — see
+    resources/udev/install-keychron-udev-rule.sh for the script itself. Without a
+    matching action, pkexec falls back to a generic elevation prompt (still safe,
+    just less descriptive) — this is why running from source, where the script's
+    path varies per checkout, still works fine but shows the generic prompt.
+  -->
+  <action id="com.linuxgamerlife.lgl-keychron-helper.install-udev-rule">
+    <description>Install LGL Keychron Helper device permissions</description>
+    <message>Authentication is required to install the udev rule that lets LGL Keychron Helper access Keychron devices</message>
+    <icon_name>lgl-keychron-helper</icon_name>
+    <defaults>
+      <allow_any>auth_admin</allow_any>
+      <allow_inactive>auth_admin</allow_inactive>
+      <allow_active>auth_admin</allow_active>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/usr/libexec/lgl-keychron-helper/install-keychron-udev-rule.sh</annotate>
+  </action>
+
+  <action id="com.linuxgamerlife.lgl-keychron-helper.remove-udev-rule">
+    <description>Remove LGL Keychron Helper device permissions</description>
+    <message>Authentication is required to remove the udev rule that lets LGL Keychron Helper access Keychron devices</message>
+    <icon_name>lgl-keychron-helper</icon_name>
+    <defaults>
+      <allow_any>auth_admin</allow_any>
+      <allow_inactive>auth_admin</allow_inactive>
+      <allow_active>auth_admin</allow_active>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/usr/libexec/lgl-keychron-helper/remove-keychron-udev-rule.sh</annotate>
+  </action>
+</policyconfig>

@@ -205,9 +205,9 @@ Installation should place system permission files directly, avoiding a first-run
 
 Exit criterion: the application installs, launches, configures the M7 8K, upgrades, and uninstalls cleanly on supported Fedora versions.
 
-**Pending items for this phase (not yet done):**
+**Pending items for this phase:**
 
-- [ ] Add a close button to the About popup.
+- [x] Add a close button to the About popup.
 - [ ] Bump `package.json` version to `1.0.0` for the RPM release.
 
 ## Proposed repository structure

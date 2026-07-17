@@ -45,6 +45,12 @@ export function showAboutWindow(parent: BrowserWindow | null): void {
     }
   });
 
+  aboutWindow.webContents.on('did-navigate-in-page', (_event, url) => {
+    if (new URL(url).hash === '#close') {
+      aboutWindow?.close();
+    }
+  });
+
   aboutWindow.webContents.on('before-input-event', (_event, input) => {
     if (input.type === 'keyDown' && input.key === 'Escape') {
       aboutWindow?.close();

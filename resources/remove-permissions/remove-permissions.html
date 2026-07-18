@@ -87,6 +87,23 @@
         overflow-y: auto;
       }
 
+      .fedora-note {
+        color: #f2f0f2;
+        font-size: 12px;
+        line-height: 1.4;
+        text-align: left;
+        background: #2d2a30;
+        border: 1px solid #45414a;
+        border-radius: 6px;
+        padding: 10px 12px;
+        margin: 0 0 20px;
+      }
+
+      .fedora-note strong {
+        display: block;
+        margin-bottom: 2px;
+      }
+
       .fallback-label {
         color: #b5b0b8;
         font-size: 12px;
@@ -139,6 +156,11 @@
       <p class="description">
         Note: if you are happy to continue, click Remove Device Permissions and you will be
         presented with your usual authentication window.
+      </p>
+      <p class="fedora-note">
+        <strong>Fedora users:</strong> don't worry, permissions are taken care of for you.
+        They're removed automatically when you uninstall the RPM. This button is only needed on
+        other systemd-based Linux distros.
       </p>
       <div class="buttons">
         <a class="button primary" href="#remove">Remove Device Permissions</a>

@@ -11,10 +11,12 @@ export function showAboutWindow(parent: BrowserWindow | null): void {
 
   aboutWindow = new BrowserWindow({
     width: 360,
-    height: 440,
-    resizable: false,
+    height: 490,
+    minWidth: 360,
+    minHeight: 440,
+    resizable: true,
     minimizable: false,
-    maximizable: false,
+    maximizable: true,
     fullscreenable: false,
     autoHideMenuBar: true,
     title: 'About LGL Keychron Helper',

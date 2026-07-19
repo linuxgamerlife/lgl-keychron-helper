@@ -118,6 +118,18 @@ done
 %license LICENSE
 %doc README.md CHANGELOG.md
 %{_bindir}/%{name}
+# Electron's Linux sandbox needs this helper owned by root with the setuid bit
+# set: it briefly uses that privilege only to construct a locked-down namespace/
+# seccomp-bpf sandbox for the renderer and utility processes, then drops it
+# immediately — the actual process handling untrusted content still runs as the
+# invoking user, never as root. This is the same mechanism every properly
+# packaged Chromium-based browser uses (chrome-sandbox in the official Google
+# Chrome .deb/.rpm, etc.), not a security reduction. Without it, Chromium falls
+# back to a weaker, unconfigured sandbox. Found missing while investigating an
+# unrelated firmware-flash bug (a WebUSB device-enumeration failure, tracked
+# upstream as electron/electron#36615) — this fix didn't resolve that bug, but is
+# a real gap worth fixing regardless.
+%attr(4755,root,root) %{_prefix}/lib/%{name}/chrome-sandbox
 %{_prefix}/lib/%{name}/
 %{_libexecdir}/%{name}/
 %{_udevrulesdir}/71-keychron-hid.rules

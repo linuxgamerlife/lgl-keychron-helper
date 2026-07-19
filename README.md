@@ -123,6 +123,11 @@ Linux device access uses a narrow `udev` rule installed through a `pkexec`-invok
 
 See [lgl-keychron-helper_projectplan.md](lgl-keychron-helper_projectplan.md) for the detailed implementation plan and acceptance criteria.
 
+### Known Limitations
+
+> [!WARNING]
+> Firmware updates don't work for devices that require entering a USB DFU/bootloader mode (confirmed on the K4 HE keyboard). Launcher's firmware-flash page relies on WebUSB, which currently returns zero devices in Electron on Linux — a known upstream Electron bug ([electron/electron#36615](https://github.com/electron/electron/issues/36615)), not something this app can fix. Firmware updates for HID-based devices (confirmed on the M7 8K mouse) are unaffected, since they use a different, working code path (WebHID). See [CHANGELOG.md](CHANGELOG.md) for the full investigation.
+
 ---
 
 ## Project Status and Affiliation

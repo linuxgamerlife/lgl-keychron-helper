@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `packaging/lgl-keychron-helper.spec`: the bundled `chrome-sandbox` helper is now installed with `%attr(4755,root,root)`, so Electron's Linux sandbox is actually configured on install instead of silently falling back to an unconfigured one. Found while investigating the WebUSB issue below; didn't fix it, but is a real gap worth closing on its own.
+- Electron bumped `43.1.0` → `43.1.1` (patch release).
+
+### Known limitations
+
+- Firmware updates for devices that enter a USB DFU/bootloader mode (confirmed on the K4 HE keyboard) don't work: Launcher's "Match Device" button calls `navigator.usb.requestDevice()`, which returns zero devices in this Electron version on Linux even though the same devices enumerate correctly in a real Chrome tab and even when called directly from this app's DevTools console. Traced to a known upstream Electron bug (`electron/electron#36615`), not anything in this app's code — ruled out the sandbox, udev/file permissions, and both a patch and alpha-level Electron version bump before reaching this conclusion. Firmware updates for HID-based devices (confirmed on the M7 8K mouse) are unaffected, since WebHID uses a completely different, working code path. No workaround shipped: opening the firmware-flash page in a separate system browser would fix it, but directly contradicts this app's one goal of never requiring a separate browser. Tracking upstream for a fix.
+
 ## [1.0.1] - 2026-07-18
 
 ### Added

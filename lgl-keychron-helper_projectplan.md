@@ -18,7 +18,7 @@ The first working prototype will target Fedora, run from source, and be validate
 - Network: an internet connection is required.
 - Browser engine: a bundled Chromium engine is acceptable; users must not need a separate Chromium browser.
 - Supported products: devices officially supported by Keychron Launcher.
-- Initial feature scope: device detection and connection through Launcher (confirmed working, Phase 4). All device configuration and firmware updates (button remapping, macros, lighting, DPI/sensitivity, polling rate, lift-off distance) are achieved through the Keychron webapp itself, not this app.
+- Initial feature scope: device detection and connection through Launcher (confirmed working, Phase 4). All device configuration and firmware updates (button remapping, macros, lighting, DPI/sensitivity, polling rate, lift-off distance) are achieved through the Keychron webapp itself, not this app. **Amendment (2026-07-19):** this superseded an earlier planning-session note (`memory.md`) that firmware updates were deferred entirely; they were later folded into "handled by Launcher" scope like everything else, without re-confirming that assumption against the WebUSB-based flow some devices' firmware updates actually need. See the Phase 4 amendment below — that assumption doesn't fully hold today.
 - Site storage: persist Launcher cookies, local storage, and settings between launches.
 - Linux permissions: detect missing HID permissions and offer guided installation through `pkexec`.
 
@@ -127,6 +127,8 @@ Exit criterion: a regular Fedora user can resolve a missing-device-permission fa
 
 **Amendment (2026-07-14):** confirmed working through Launcher's own interface: button mapping, macros, lighting, DPI/sensitivity, polling rate, and other controls all function correctly through the app's WebHID connection. Not every sub-item below was necessarily exercised exhaustively one by one, but general functionality is confirmed good.
 
+**Amendment (2026-07-19):** firmware updates specifically (not covered by the general validation above) don't work for every device. Launcher's firmware-flash page needs a device in USB DFU/bootloader mode (confirmed on the K4 HE keyboard), which it accesses via `navigator.usb.requestDevice()` (WebUSB) rather than WebHID. That call returns zero devices in this Electron version on Linux, confirmed as a known upstream bug (`electron/electron#36615`) after ruling out this app's own code, sandbox configuration, and udev/file permissions, and after testing both a patch and an alpha-level Electron version bump with no change. Firmware updates for HID-based devices (confirmed on the M7 8K mouse) are unaffected. See `CHANGELOG.md`'s `[Unreleased]` section for the full investigation. No in-app workaround was built (opening the flash page in a separate system browser would work, but directly contradicts this project's one goal of never requiring a separate browser); this is tracked as a known limitation pending an upstream Electron fix.
+
 **Amendment (2026-07-16):** wireless connection via the Keychron-supplied dongle confirmed working as well, not just wired. Launcher itself warns against firmware updates over the receiver (see the "Agreed requirements" amendment above); only configuration was validated over the dongle; treat wired as the required connection for any firmware update.
 
 Validate the following against the physical mouse:
@@ -196,7 +198,7 @@ Begin after the source prototype is stable.
 
 The RPM should provide:
 
-- The packaged Electron application. **Done** — `packaging/lgl-keychron-helper.spec` installs the `npm run package` output to `/usr/lib/lgl-keychron-helper/`, with a thin `/usr/bin/lgl-keychron-helper` launcher.
+- The packaged Electron application. **Done** — `packaging/lgl-keychron-helper.spec` installs the `npm run package` output to `/usr/lib/lgl-keychron-helper/`, with a thin `/usr/bin/lgl-keychron-helper` launcher. **Amendment (2026-07-19):** the bundled `chrome-sandbox` helper is now installed with `%attr(4755,root,root)`, so Electron's Linux sandbox (setuid helper briefly used only to construct a locked-down namespace/seccomp-bpf sandbox, not a privilege the actual renderer/utility processes ever hold) is correctly configured on install rather than silently falling back to an unconfigured one. Found while investigating the Phase 4 WebUSB firmware-flash issue; didn't resolve that bug, but was a real, independent packaging gap.
 - Desktop entry, icons, and application metadata. **Done** — `packaging/lgl-keychron-helper.desktop`, `packaging/icons/hicolor/` (9 sizes generated from `resources/lgl-keychron-helper.png`), and every `BrowserWindow` now sets a real `icon:`.
 - The audited `udev` rule or rule set. **Done** — installed both as the active rule (`%{_udevrulesdir}/71-keychron-hid.rules`) and mirrored at a fixed path for PolicyKit matching (see below).
 - The minimal privileged helper and required PolicyKit policy. **Done** — `packaging/com.linuxgamerlife.lgl-keychron-helper.policy` defines two actions (install/remove), matched via `org.freedesktop.policykit.exec.path` against `/usr/libexec/lgl-keychron-helper/`. `src/main/udev-paths.ts`'s `resolveUdevDir()` prefers that fixed path when present, falling back to the existing dev/bundled resolution otherwise.
